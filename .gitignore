@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.deploy/
+# thư mục release khi deploy từ local vào cùng đường dẫn với repo trên VPS
+/releases/
+/current
+server.pid
+server.log
+.env*
+*.log
+.DS_Store

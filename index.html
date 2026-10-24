@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DKMH – Xếp thời khóa biểu</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗓️</text></svg>" />
+  </head>
+  <body>
+    <header class="topbar">
+      <h1>🗓️ Xếp thời khóa biểu</h1>
+      <form id="sheet-form" class="sheet-form">
+        <input id="sheet-url" type="url" placeholder="Link Google Sheet (Publish to web)" required />
+        <select id="sheet-tab" hidden></select>
+        <button type="submit" class="btn primary">Tải sheet</button>
+        <button type="button" id="reload" class="btn" title="Tải lại từ Google, bỏ qua bộ nhớ đệm">↻</button>
+        <button type="button" id="reset-url" class="btn ghost" title="Dùng link mặc định">Mặc định</button>
+      </form>
+      <div id="status" class="status"></div>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="plan">Xếp lịch</button>
+      <button class="tab" data-tab="data">Dữ liệu gốc <span id="data-count"></span></button>
+      <button class="tab" data-tab="warn">Cảnh báo dữ liệu <span id="warn-count"></span></button>
+    </nav>
+
+    <main>
+      <section id="tab-plan" class="tab-panel">
+        <div class="layout">
+          <aside class="filters">
+            <h2>1. Chọn môn học</h2>
+            <div id="f-course"></div>
+            <div id="course-summary" class="course-summary"></div>
+
+            <h2>2. Bộ lọc</h2>
+            <label class="lbl">Thứ được phép học</label>
+            <div id="f-thu"></div>
+            <label class="lbl">Ca được phép học</label>
+            <div id="f-ca"></div>
+            <label class="lbl">Phòng / khu học</label>
+            <div id="f-room"></div>
+            <label class="lbl">Chương trình đào tạo (CTĐT)</label>
+            <div id="f-ctdt"></div>
+            <label class="lbl">Lớp học phần (ghim lớp cụ thể)</label>
+            <div id="f-lop"></div>
+            <label class="chk"><input type="checkbox" id="opt-ontap" /> Gồm cả lớp ôn tập</label>
+            <p class="hint">Bộ lọc thứ/ca/phòng áp dụng cho <b>mọi buổi</b> của lớp (vì đăng ký lớp là học tất cả các buổi). Buổi ở phòng LMS/BTN không bị lọc và không tính trùng.</p>
+
+            <h2>3. Ưu tiên sắp xếp</h2>
+            <label class="chk"><input type="checkbox" id="opt-online" checked /> Tính buổi học trực tuyến (HTT) là ngày đi học</label>
+            <div class="row">
+              <span class="lbl">Ưu tiên buổi:</span>
+              <label class="chk"><input type="checkbox" name="buoi" value="sang" /> Sáng</label>
+              <label class="chk"><input type="checkbox" name="buoi" value="chieu" /> Chiều</label>
+              <label class="chk"><input type="checkbox" name="buoi" value="toi" /> Tối</label>
+            </div>
+            <details class="weights">
+              <summary>Trọng số (nâng cao)</summary>
+              <label>Ngày trống xen giữa <input type="number" id="w-gap" min="0" step="1" /></label>
+              <label>Số ngày đi học <input type="number" id="w-days" min="0" step="1" /></label>
+              <label>Ca trống trong ngày <input type="number" id="w-idle" min="0" step="1" /></label>
+              <label>Lệch buổi ưu tiên <input type="number" id="w-pref" min="0" step="1" /></label>
+              <label>Số phương án hiển thị <input type="number" id="opt-topk" min="1" max="100" step="1" /></label>
+              <p class="hint">Điểm = tổng qua từng tuần học. Càng thấp càng tốt.</p>
+            </details>
+
+            <button id="run" class="btn primary big" disabled>Xếp thời khóa biểu</button>
+          </aside>
+
+          <section class="results">
+            <div id="results-head" class="results-head"></div>
+            <div id="solutions" class="solutions"></div>
+            <div id="detail" class="detail"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tab-data" class="tab-panel" hidden>
+        <div class="data-tools">
+          <input id="data-search" type="search" placeholder="Tìm theo mã lớp, mã HP, tên, phòng, CTĐT…" />
+          <span id="data-info"></span>
+        </div>
+        <div class="table-wrap"><table id="data-table" class="data-table"></table></div>
+        <div id="data-pager" class="pager"></div>
+      </section>
+
+      <section id="tab-warn" class="tab-panel" hidden>
+        <ul id="warn-list" class="warn-list"></ul>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
