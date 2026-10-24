@@ -6,7 +6,12 @@
 #   ./deploy.sh
 #   -> build ở local, upload qua SSH vào <REMOTE_DIR>/releases/<thời gian>, kích hoạt trên VPS.
 #
-# Cách 2 — chạy TRỰC TIẾP TRÊN VPS, trong thư mục đã clone repo (VPS cần SSH key/deploy key của GitHub):
+# Cách 2 — chạy TRỰC TIẾP TRÊN VPS, trong thư mục đã clone repo. Repo private nên VPS cần deploy key,
+#   nếu không sẽ lỗi "Permission denied (publickey)". Tạo 1 lần trên VPS:
+#     ssh-keygen -t ed25519 -f ~/.ssh/dkmh_deploy -N "" -C "vps-dkmh"
+#     printf 'Host github.com\n  IdentityFile ~/.ssh/dkmh_deploy\n  IdentitiesOnly yes\n' >> ~/.ssh/config
+#     cat ~/.ssh/dkmh_deploy.pub   # dán vào GitHub > repo dkmh > Settings > Deploy keys (chỉ đọc)
+#   rồi:
 #   git clone git@github.com:khangtran2404/dkmh.git && cd dkmh && ./deploy.sh --here
 #   cập nhật: git pull && ./deploy.sh --here
 #   -> build trên VPS, release nằm trong <repo>/.deploy/releases.
@@ -35,7 +40,7 @@ MODE="ssh"
 case "${1:-}" in
     --here) MODE="here" ;;
     "") ;;
-    -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
+    -h|--help) sed -n '2,29p' "$0"; exit 0 ;;
     *) printf 'Tham số không hợp lệ: %s (dùng --here hoặc --help)\n' "$1" >&2; exit 2 ;;
 esac
 

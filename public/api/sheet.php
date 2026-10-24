@@ -36,14 +36,17 @@ function fetch_url(string $url): string {
 }
 
 function cached_fetch(string $url, bool $nocache): string {
-    $dir = sys_get_temp_dir() . '/dkmh-cache';
+    // Thư mục riêng theo user của tiến trình (CLI và PHP-FPM chạy bằng user khác nhau)
+    $uid = function_exists('posix_geteuid') ? posix_geteuid() : get_current_user();
+    $dir = sys_get_temp_dir() . "/dkmh-cache-$uid";
     if (!is_dir($dir)) @mkdir($dir, 0700, true);
     $file = $dir . '/' . sha1($url) . '.html';
     if (!$nocache && is_file($file) && time() - filemtime($file) < CACHE_TTL) {
-        return file_get_contents($file);
+        $body = @file_get_contents($file);
+        if ($body !== false) return $body;
     }
     $body = fetch_url($url);
-    @file_put_contents($file, $body);
+    if (is_dir($dir) && is_writable($dir)) @file_put_contents($file, $body, LOCK_EX);
     return $body;
 }
 
@@ -93,7 +96,11 @@ if ($sheets) {
 
 if (stripos($html, '<table') === false) fail(502, 'Không tìm thấy bảng dữ liệu trong sheet');
 
-// Chỉ trả phần <table> để giảm dung lượng
+// Chỉ trả phần <table>, bỏ thuộc tính trình bày (class/style/id), cột số dòng <th> và thẻ <div> bọc chữ:
+// giữ nguyên rowspan/colspan và nội dung -> nhỏ hơn ~55%, trình duyệt parse nhanh hơn
 if (preg_match('#<table.*</table>#is', $html, $t)) $html = $t[0];
+$html = preg_replace('#<th\b[^>]*>.*?</th>#is', '', $html);
+$html = preg_replace('#\s(?:class|style|id|dir|cellspacing|cellpadding)="[^"]*"#i', '', $html);
+$html = preg_replace('#</?(?:div|thead|colgroup|col)\b[^>]*>#i', '', $html);
 
 echo json_encode(['sheets' => $sheets, 'gid' => $gid, 'html' => $html], JSON_UNESCAPED_UNICODE);

@@ -101,7 +101,13 @@ async function sheetApi(query) {
   const start = html.search(/<table/i);
   const end = html.toLowerCase().lastIndexOf('</table>');
   if (start < 0 || end < 0) throw new HttpError(502, 'Không tìm thấy bảng dữ liệu trong sheet');
-  return { sheets, gid, html: html.slice(start, end + 8) };
+  // Bỏ thuộc tính trình bày, cột số dòng <th>, thẻ <div> bọc chữ (giữ rowspan/colspan) -> nhỏ hơn ~55%
+  const table = html
+    .slice(start, end + 8)
+    .replace(/<th\b[^>]*>[\s\S]*?<\/th>/gi, '')
+    .replace(/\s(?:class|style|id|dir|cellspacing|cellpadding)="[^"]*"/gi, '')
+    .replace(/<\/?(?:div|thead|colgroup|col)\b[^>]*>/gi, '');
+  return { sheets, gid, html: table };
 }
 
 // ---------------- Static ----------------

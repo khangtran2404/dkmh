@@ -18,7 +18,8 @@ npm run build        # -> dist/
 ```
 
 - Local (`dkmh.local`): nginx + PHP-FPM, proxy ở `public/api/sheet.php` — cài bằng `sudo bash deploy/install.sh`.
-- VPS: `./deploy.sh` (từ máy local, upload qua SSH) hoặc `./deploy.sh --here` (trên VPS sau `git pull`).
+- VPS: `./deploy.sh` (từ máy local, upload qua SSH — VPS không cần quyền vào repo) hoặc `./deploy.sh --here`
+  (trên VPS sau `git pull`; repo private nên VPS cần **deploy key**, xem đầu file `deploy.sh`).
   App chạy bằng `deploy/server.cjs` (Node ≥ 18, không cần thư viện), mặc định cổng 1712. Xem `./deploy.sh --help`.
 
 ## Cấu trúc

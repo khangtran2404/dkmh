@@ -40,10 +40,15 @@ export function extractRowsFromTable(table) {
     const cells = [];
     for (const td of tr.children) {
       if (td.tagName !== 'TD') continue;
-      const clone = td.cloneNode(true);
-      clone.querySelectorAll('br').forEach((br) => br.replaceWith(' '));
+      let text = td.textContent;
+      if (td.firstElementChild && td.querySelector('br')) {
+        // <br> -> khoảng trắng (parseSheetHtml đã thay sẵn trên chuỗi nên nhánh này hiếm khi chạy)
+        const clone = td.cloneNode(true);
+        clone.querySelectorAll('br').forEach((br) => br.replaceWith(' '));
+        text = clone.textContent;
+      }
       cells.push({
-        text: clone.textContent,
+        text,
         rowspan: +td.getAttribute('rowspan') || 1,
         colspan: +td.getAttribute('colspan') || 1,
       });
@@ -294,8 +299,8 @@ function inferSemesterStart(sections, warnings) {
   return start;
 }
 
-/** Gọi proxy, trả về { sheets, gid, data } */
-export async function loadSheet(url, { gid = '', nocache = false } = {}) {
+/** Gọi proxy, trả về { sheets, gid, html } (html là bảng đã được proxy làm gọn) */
+export async function fetchSheet(url, { gid = '', nocache = false } = {}) {
   const qs = new URLSearchParams({ url });
   if (gid) qs.set('gid', gid);
   if (nocache) qs.set('nocache', '1');
@@ -307,9 +312,14 @@ export async function loadSheet(url, { gid = '', nocache = false } = {}) {
     throw new Error(`Proxy lỗi (HTTP ${res.status})`);
   }
   if (!res.ok || body.error) throw new Error(body.error || `HTTP ${res.status}`);
-  const doc = new DOMParser().parseFromString(body.html, 'text/html');
+  return body;
+}
+
+/** HTML bảng -> dữ liệu đã chuẩn hoá */
+export function parseSheetHtml(html) {
+  // Đổi <br> thành khoảng trắng ngay trên chuỗi: tránh phải clone từng ô khi đọc chữ (nhanh hơn ~5 lần)
+  const doc = new DOMParser().parseFromString(html.replace(/<br\s*\/?>/gi, ' '), 'text/html');
   const table = doc.querySelector('table');
   if (!table) throw new Error('Không tìm thấy bảng trong sheet');
-  const data = parseGrid(buildGrid(extractRowsFromTable(table)));
-  return { sheets: body.sheets, gid: body.gid, data };
+  return parseGrid(buildGrid(extractRowsFromTable(table)));
 }

@@ -3,90 +3,134 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f9fa" />
     <title>DKMH – Xếp thời khóa biểu</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗓️</text></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%234FD1C5'/><path d='M7 3v3M17 3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z' stroke='white' stroke-width='2' fill='none' stroke-linecap='round'/></svg>" />
   </head>
   <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M7 2a1 1 0 0 1 1 1v1h8V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1zM4 10v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9H4zm3 3h3v3H7v-3z" fill="currentColor"/></symbol>
+        <symbol id="i-table" viewBox="0 0 24 24"><path d="M4 3h16a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm0 6v4h7V9H4zm9 0v4h7V9h-7zm-9 6v4h7v-4H4zm9 0v4h7v-4h-7z" fill="currentColor"/></symbol>
+        <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9a2 2 0 0 1 3.4 0l8.1 14A2 2 0 0 1 20.1 21H3.9a2 2 0 0 1-1.7-3.1l8.1-14zM11 9v5h2V9h-2zm0 7v2h2v-2h-2z" fill="currentColor"/></symbol>
+        <symbol id="i-link" viewBox="0 0 24 24"><path d="M10.6 13.4a1 1 0 0 1 0-1.4l3.5-3.5a1 1 0 1 1 1.4 1.4L12 13.4a1 1 0 0 1-1.4 0zM8.5 19.5a4.5 4.5 0 0 1-3.2-7.7l2.1-2.1a1 1 0 1 1 1.4 1.4l-2.1 2.1a2.5 2.5 0 0 0 3.5 3.5l2.1-2.1a1 1 0 1 1 1.4 1.4l-2.1 2.1a4.5 4.5 0 0 1-3.1 1.4zm7.4-5.8a1 1 0 0 1-.7-1.7l2.1-2.1a2.5 2.5 0 0 0-3.5-3.5l-2.1 2.1a1 1 0 1 1-1.4-1.4l2.1-2.1a4.5 4.5 0 0 1 6.4 6.4l-2.1 2.1a1 1 0 0 1-.8.2z" fill="currentColor"/></symbol>
+        <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M12 4a8 8 0 0 1 7.4 5H17v2h6V5h-2v2.3A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8zm8 8a8 8 0 0 1-15.4 3H7v-2H1v6h2v-2.3A10 10 0 0 0 22 12h-2z" fill="currentColor"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><path d="M10 3a7 7 0 0 1 5.6 11.2l4.6 4.6-1.4 1.4-4.6-4.6A7 7 0 1 1 10 3zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/></symbol>
+      </defs>
+    </svg>
+
     <header class="topbar">
-      <h1>🗓️ Xếp thời khóa biểu</h1>
+      <div class="brand">
+        <span class="brand-logo"><svg><use href="#i-calendar" /></svg></span>
+        <span class="brand-text"><b>DKMH</b><small>Xếp thời khóa biểu</small></span>
+      </div>
+      <nav class="seg" aria-label="Trang">
+        <button class="tab active" data-tab="plan" aria-current="page"><svg><use href="#i-calendar" /></svg><span>Xếp lịch</span></button>
+        <button class="tab" data-tab="data"><svg><use href="#i-table" /></svg><span>Dữ liệu</span><span id="data-count" class="badge"></span></button>
+        <button class="tab" data-tab="warn"><svg><use href="#i-alert" /></svg><span>Cảnh báo</span><span id="warn-count" class="badge warn"></span></button>
+      </nav>
       <form id="sheet-form" class="sheet-form">
-        <input id="sheet-url" type="url" placeholder="Link Google Sheet (Publish to web)" required />
-        <select id="sheet-tab" hidden></select>
+        <label class="input-group">
+          <svg class="input-icon"><use href="#i-link" /></svg>
+          <input id="sheet-url" type="url" placeholder="Link Google Sheet (Publish to web)" required aria-label="Link Google Sheet" />
+        </label>
+        <select id="sheet-tab" class="select" hidden aria-label="Chọn trang tính"></select>
         <button type="submit" class="btn primary">Tải sheet</button>
-        <button type="button" id="reload" class="btn" title="Tải lại từ Google, bỏ qua bộ nhớ đệm">↻</button>
+        <button type="button" id="reload" class="btn outline icon-only" title="Tải lại từ Google, bỏ qua bộ nhớ đệm" aria-label="Tải lại từ Google"><svg><use href="#i-refresh" /></svg></button>
         <button type="button" id="reset-url" class="btn ghost" title="Dùng link mặc định">Mặc định</button>
       </form>
-      <div id="status" class="status"></div>
     </header>
 
-    <nav class="tabs">
-      <button class="tab active" data-tab="plan">Xếp lịch</button>
-      <button class="tab" data-tab="data">Dữ liệu gốc <span id="data-count"></span></button>
-      <button class="tab" data-tab="warn">Cảnh báo dữ liệu <span id="warn-count"></span></button>
-    </nav>
+    <div class="statusbar">
+      <span id="status" class="status"></span>
+      <span class="stats" aria-label="Thống kê dữ liệu">
+        <span><b id="st-rows">—</b> dòng</span>
+        <span><b id="st-sections">—</b> lớp HP <small id="st-sections-sub"></small></span>
+        <span><b id="st-courses">—</b> môn</span>
+        <span>Tuần 1: <b id="st-week">—</b></span>
+      </span>
+    </div>
 
-    <main>
-      <section id="tab-plan" class="tab-panel">
-        <div class="layout">
-          <aside class="filters">
-            <h2>1. Chọn môn học</h2>
+    <main class="app">
+      <section id="tab-plan" class="tab-panel plan">
+        <aside class="card panel filters">
+          <div class="panel-body">
+            <h2 class="card-title">Chọn môn học</h2>
             <div id="f-course"></div>
             <div id="course-summary" class="course-summary"></div>
 
-            <h2>2. Bộ lọc</h2>
-            <label class="lbl">Thứ được phép học</label>
-            <div id="f-thu"></div>
-            <label class="lbl">Ca được phép học</label>
-            <div id="f-ca"></div>
-            <label class="lbl">Phòng / khu học</label>
-            <div id="f-room"></div>
-            <label class="lbl">Chương trình đào tạo (CTĐT)</label>
-            <div id="f-ctdt"></div>
-            <label class="lbl">Lớp học phần (ghim lớp cụ thể)</label>
-            <div id="f-lop"></div>
-            <label class="chk"><input type="checkbox" id="opt-ontap" /> Gồm cả lớp ôn tập</label>
-            <p class="hint">Bộ lọc thứ/ca/phòng áp dụng cho <b>mọi buổi</b> của lớp (vì đăng ký lớp là học tất cả các buổi). Buổi ở phòng LMS/BTN không bị lọc và không tính trùng.</p>
-
-            <h2>3. Ưu tiên sắp xếp</h2>
-            <label class="chk"><input type="checkbox" id="opt-online" checked /> Tính buổi học trực tuyến (HTT) là ngày đi học</label>
-            <div class="row">
-              <span class="lbl">Ưu tiên buổi:</span>
-              <label class="chk"><input type="checkbox" name="buoi" value="sang" /> Sáng</label>
-              <label class="chk"><input type="checkbox" name="buoi" value="chieu" /> Chiều</label>
-              <label class="chk"><input type="checkbox" name="buoi" value="toi" /> Tối</label>
+            <h2 class="card-title">Bộ lọc</h2>
+            <div class="grid-2">
+              <div><label class="lbl">Thứ được học</label><div id="f-thu"></div></div>
+              <div><label class="lbl">Ca được học</label><div id="f-ca"></div></div>
+              <div><label class="lbl">Phòng / khu</label><div id="f-room"></div></div>
+              <div><label class="lbl">CTĐT</label><div id="f-ctdt"></div></div>
             </div>
-            <details class="weights">
+            <label class="lbl">Ghim lớp học phần</label>
+            <div id="f-lop"></div>
+
+            <div class="opts">
+              <label class="switch"><input type="checkbox" id="opt-ontap" /><span class="track"></span> Gồm lớp ôn tập</label>
+              <label class="switch"><input type="checkbox" id="opt-online" checked /><span class="track"></span> Tính buổi HTT (online) là ngày đi học</label>
+              <div class="row">
+                <span class="lbl">Ưu tiên buổi</span>
+                <label class="pill-check"><input type="checkbox" name="buoi" value="sang" /><span>Sáng</span></label>
+                <label class="pill-check"><input type="checkbox" name="buoi" value="chieu" /><span>Chiều</span></label>
+                <label class="pill-check"><input type="checkbox" name="buoi" value="toi" /><span>Tối</span></label>
+              </div>
+            </div>
+
+            <details class="more">
               <summary>Trọng số (nâng cao)</summary>
-              <label>Ngày trống xen giữa <input type="number" id="w-gap" min="0" step="1" /></label>
-              <label>Số ngày đi học <input type="number" id="w-days" min="0" step="1" /></label>
-              <label>Ca trống trong ngày <input type="number" id="w-idle" min="0" step="1" /></label>
-              <label>Lệch buổi ưu tiên <input type="number" id="w-pref" min="0" step="1" /></label>
-              <label>Số phương án hiển thị <input type="number" id="opt-topk" min="1" max="100" step="1" /></label>
-              <p class="hint">Điểm = tổng qua từng tuần học. Càng thấp càng tốt.</p>
+              <div class="weights">
+                <label>Ngày trống xen giữa <input type="number" id="w-gap" min="0" step="1" /></label>
+                <label>Số ngày đi học <input type="number" id="w-days" min="0" step="1" /></label>
+                <label>Ca trống trong ngày <input type="number" id="w-idle" min="0" step="1" /></label>
+                <label>Lệch buổi ưu tiên <input type="number" id="w-pref" min="0" step="1" /></label>
+                <label>Số phương án <input type="number" id="opt-topk" min="1" max="100" step="1" /></label>
+              </div>
+              <p class="hint">Điểm = tổng qua từng tuần học, càng thấp càng tốt.</p>
             </details>
-
+            <details class="more">
+              <summary>Quy tắc xếp lịch</summary>
+              <p class="hint">Trùng lịch khi cùng thứ, cùng ca và có ít nhất 1 tuần chung. Phòng LMS/BTN không tính trùng.
+                Bộ lọc thứ/ca/phòng áp dụng cho <b>mọi buổi</b> của lớp. Ưu tiên: ngày học liên tiếp → ít ngày đi học → ít ca trống.</p>
+            </details>
+          </div>
+          <div class="panel-foot">
             <button id="run" class="btn primary big" disabled>Xếp thời khóa biểu</button>
-          </aside>
+          </div>
+        </aside>
 
-          <section class="results">
-            <div id="results-head" class="results-head"></div>
-            <div id="solutions" class="solutions"></div>
-            <div id="detail" class="detail"></div>
-          </section>
-        </div>
+        <section class="workspace">
+          <div id="results-head" class="card results-head"></div>
+          <div id="solutions" class="solutions" role="list"></div>
+          <div id="detail" class="card detail"></div>
+        </section>
       </section>
 
       <section id="tab-data" class="tab-panel" hidden>
-        <div class="data-tools">
-          <input id="data-search" type="search" placeholder="Tìm theo mã lớp, mã HP, tên, phòng, CTĐT…" />
-          <span id="data-info"></span>
+        <div class="card fill">
+          <div class="card-head">
+            <h2 class="card-title">Dữ liệu gốc từ sheet</h2>
+            <div class="data-tools">
+              <label class="input-group">
+                <svg class="input-icon"><use href="#i-search" /></svg>
+                <input id="data-search" type="search" placeholder="Tìm mã lớp, mã HP, tên, phòng, CTĐT…" aria-label="Tìm trong dữ liệu" />
+              </label>
+              <span id="data-info" class="muted"></span>
+            </div>
+          </div>
+          <div class="table-wrap"><table id="data-table" class="data-table"></table></div>
+          <div id="data-pager" class="pager"></div>
         </div>
-        <div class="table-wrap"><table id="data-table" class="data-table"></table></div>
-        <div id="data-pager" class="pager"></div>
       </section>
 
       <section id="tab-warn" class="tab-panel" hidden>
-        <ul id="warn-list" class="warn-list"></ul>
+        <div class="card fill">
+          <h2 class="card-title">Cảnh báo dữ liệu</h2>
+          <div class="scroll"><ul id="warn-list" class="warn-list"></ul></div>
+        </div>
       </section>
     </main>
 
